@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { Geolocation, Geoposition } from '@ionic-native/geolocation';
+import { Http, Headers } from '@angular/http';
+import 'rxjs/add/operator/map';
+
 
 declare var google;
 
@@ -12,13 +15,13 @@ export class HomePage {
 
   map: any;
   marker: any;
-
-  constructor(public navCtrl: NavController, public geolocation: Geolocation) {
+  
+  constructor(public navCtrl: NavController, public geolocation: Geolocation, public http: Http) {
     // setInterval(() => { this.getPositionCurrent(); }, 1000);
   }
   ionViewDidLoad(){
-     this.getPosition();
-   this.setMap(); 
+    this.getPosition();
+    this.setMap(); 
   
   }
   getPosition():any{
@@ -69,6 +72,17 @@ export class HomePage {
     map.setCenter(latLng);
     map.panTo(latLng);
     console.log(latLng);
+    let headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    let body = {
+      message: 'do you hear me?'
+    };
+    this.http.post('http://localhost:8080/api/test', JSON.stringify(latLng), {headers: headers})
+    .map(res => res.json())
+    .subscribe(data => {
+      console.log(data);
+    });
+
   }
   
     
