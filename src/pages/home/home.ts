@@ -11,26 +11,26 @@ declare var google;
 export class HomePage {
 
   map: any;
+  marker: any;
 
   constructor(public navCtrl: NavController, public geolocation: Geolocation) {
-
+    // setInterval(() => { this.getPositionCurrent(); }, 1000);
   }
   ionViewDidLoad(){
-    this.getPosition();
+     this.getPosition();
+   this.setMap(); 
+  
   }
   getPosition():any{
-    this.geolocation.getCurrentPosition().then(response => {
-      this.loadMap(response);
+    this.geolocation.getCurrentPosition().then(response => {  
+        this.loadMap(response); 
     })
-    .catch(error =>{
-      console.log(error);
-    })
+    
   }
-
   loadMap(position: Geoposition){
     let latitude = position.coords.latitude;
     let longitude = position.coords.longitude;
-    console.log(latitude, longitude);
+    // console.log(latitude, longitude);
     
     // create a new map by passing HTMLElement
     let mapEle: HTMLElement = document.getElementById('map');
@@ -41,33 +41,35 @@ export class HomePage {
     // create map
     this.map = new google.maps.Map(mapEle, {
       center: myLatLng,
-      zoom: 12
+      zoom: 20
     });
-    // // Mensaje
-    // var infoWindows = new google.maps.InfoWindows({
-    //   content: 'Aquí estoy!!!'
-    // });
-    // // Mostramos el marcador en un mapa(this.map)
-    // let marker = new google.maps.Marker({
-    //   position: myLatLng,
-    //   map: this.map,
-    // });
-    // // muestra el mensaje cuando seleccionas el marcador
-    // marker.addListener('click', function(){
-    //   infoWindows.open(this.map, marker);
-    // });
-    // google.maps.event.addListenerOnce(this.map, 'idle', () => {
-      
-    //   mapEle.classList.add('show-map');
-    // });
     google.maps.event.addListenerOnce(this.map, 'idle', () => {
-      let marker = new google.maps.Marker({
-        position: myLatLng,
-        map: this.map,
-        title: 'Hello World!'
-      });
+      
+         this.marker = new google.maps.Marker({
+          position: myLatLng,
+          map: this.map
+        });
+        // console.log(myLatLng);
+      
+      
       mapEle.classList.add('show-map');
     });
   }
-
+  setMap(){
+    this.geolocation.watchPosition().subscribe(res => {  
+      let myLatLng = {lat: res.coords.latitude, lng: res.coords.longitude};
+      this.setMyMap(myLatLng, this.map);
+    })
+  }
+  setMyMap(latLng, map) {
+    var marker = new google.maps.Marker({
+      position: latLng,
+      map: map
+    });
+    map.setCenter(latLng);
+    map.panTo(latLng);
+    console.log(latLng);
+  }
+  
+    
 }
