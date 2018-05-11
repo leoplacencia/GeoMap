@@ -14,7 +14,8 @@ declare var google;
 export class HomePage {
 
   map: any;
-  marker: any;
+  public marker: any;
+  
   
   constructor(public navCtrl: NavController, public geolocation: Geolocation, public http: Http) {
     // setInterval(() => { this.getPositionCurrent(); }, 1000);
@@ -62,17 +63,23 @@ export class HomePage {
   setMap(){
     this.geolocation.watchPosition().subscribe(res => {  
       let myLatLng = {lat: res.coords.latitude, lng: res.coords.longitude};
-      this.setMyMap(myLatLng, this.map);
+      this.setMyMap(myLatLng, this.map, this.marker);
     })
   }
-  setMyMap(latLng, map) {
-    this.marker = new google.maps.Marker({
-      position: latLng,
-      map: map
-    });
+  setMyMap(latLng, map, marker) {
+
+    if (marker) {
+      // console.log('setnullmap:'+marker)
+      marker.setMap(null);
+      this.marker = new google.maps.Marker({
+        position: latLng,
+        map: map
+      });
+    }
+    
     map.setCenter(latLng);
     map.panTo(latLng);
-    console.log(latLng);
+    // console.log(latLng);
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
     
@@ -83,6 +90,4 @@ export class HomePage {
     });
 
   }
-    
-   
 }
