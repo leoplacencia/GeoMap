@@ -27,6 +27,7 @@ export class HomePage {
   getPosition():any{
     this.geolocation.getCurrentPosition().then(response => {  
         this.loadMap(response); 
+        
     })
     
   }
@@ -44,10 +45,10 @@ export class HomePage {
     // create map
     this.map = new google.maps.Map(mapEle, {
       center: myLatLng,
-      zoom: 20
+      zoom: 17
     });
+    
     google.maps.event.addListenerOnce(this.map, 'idle', () => {
-      
          this.marker = new google.maps.Marker({
           position: myLatLng,
           map: this.map
@@ -65,7 +66,7 @@ export class HomePage {
     })
   }
   setMyMap(latLng, map) {
-    var marker = new google.maps.Marker({
+    this.marker = new google.maps.Marker({
       position: latLng,
       map: map
     });
@@ -74,9 +75,7 @@ export class HomePage {
     console.log(latLng);
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
-    let body = {
-      message: 'do you hear me?'
-    };
+    
     this.http.post('http://localhost:8080/api/test', JSON.stringify(latLng), {headers: headers})
     .map(res => res.json())
     .subscribe(data => {
@@ -84,6 +83,6 @@ export class HomePage {
     });
 
   }
-  
     
+   
 }
